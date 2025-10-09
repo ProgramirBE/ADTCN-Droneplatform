@@ -28,18 +28,129 @@
 	</scm>
 	<properties>
 		<java.version>17</java.version>
+		<assertj-core-version>3.23.1</assertj-core-version>
+		<serenity.version>3.9.8</serenity.version>
+		<serenity.maven.version>3.9.8</serenity.maven.version>
+		<serenity.cucumber.version>3.9.8</serenity.cucumber.version>
+		<selenium.version>4.35.0</selenium.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter</artifactId>
-		</dependency>
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-data-jpa</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-web</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-thymeleaf</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.projectlombok</groupId>
+		<artifactId>lombok</artifactId>
+		<version>1.18.38</version>
+	</dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
+	<dependency>
+		<groupId>com.mysql</groupId>
+		<artifactId>mysql-connector-j</artifactId>
+		<scope>runtime</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-test</artifactId>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.hibernate.orm</groupId>
+		<artifactId>hibernate-core</artifactId>
+		<version>6.4.4.Final</version>
+	</dependency>
+	<dependency>
+		<groupId>jakarta.persistence</groupId>
+		<artifactId>jakarta.persistence-api</artifactId>
+		<version>3.1.0</version>
+	</dependency>
+
+	<!--  JUnit testen in het algemeen -->
+	<dependency>
+		<groupId>junit</groupId>
+		<artifactId>junit</artifactId>
+		<scope>test</scope>
+	</dependency>
+
+	<dependency>
+		<groupId>org.mockito</groupId>
+		<artifactId>mockito-core</artifactId>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.hamcrest</groupId>
+		<artifactId>hamcrest-core</artifactId>
+		<scope>test</scope>
+	</dependency>
+	<!-- Cucumber voor acceptatietesten  -->
+	<dependency>
+		<groupId>net.serenity-bdd</groupId>
+		<artifactId>serenity-core</artifactId>
+		<version>${serenity.version}</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>net.serenity-bdd</groupId>
+		<artifactId>serenity-junit</artifactId>
+		<version>${serenity.version}</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>net.serenity-bdd</groupId>
+		<artifactId>serenity-screenplay</artifactId>
+		<version>${serenity.version}</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>net.serenity-bdd</groupId>
+		<artifactId>serenity-cucumber</artifactId>
+		<version>${serenity.version}</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-text</artifactId>
+		<version>1.9</version>
+	</dependency>
+
+	<!-- Selenium voor acceptatietesten -->
+	<dependency>
+		<groupId>xml-apis</groupId>
+		<artifactId>xml-apis</artifactId>
+		<version>1.4.01</version>
+	</dependency>
+	<dependency>
+		<groupId>org.seleniumhq.selenium</groupId>
+		<artifactId>selenium-java</artifactId>
+		<version>${selenium.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.seleniumhq.selenium</groupId>
+		<artifactId>selenium-api</artifactId>
+		<version>${selenium.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.seleniumhq.selenium</groupId>
+		<artifactId>selenium-remote-driver</artifactId>
+		<version>${selenium.version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.seleniumhq.selenium</groupId>
+		<artifactId>selenium-chrome-driver</artifactId>
+		<version>${selenium.version}</version>
+	</dependency>
+
 	</dependencies>
 
 	<build>
