@@ -16,6 +16,7 @@ public class ReserveSteps {
 
     HomePage homePage = new HomePage(driver);
     StartPlacesPage startPlacesPage = new StartPlacesPage(driver);
+
     @Given("a start place {string} exists that is available and {int}m from the nearest no-fly zone")
     public void setupAvailablePlace(String id, int distance) {
         // Seed via API or test DB instead of UI
@@ -51,10 +52,5 @@ public class ReserveSteps {
     public void verifyExpiry(int minutes) {
         String expiryText = startPlacesPage.getExpiryText("SP-101");
         assertTrue(expiryText.contains(String.valueOf(minutes)));
-    }
-
-    @After
-    public void cleanup() {
-        if (driver != null) driver.quit();
     }
 }

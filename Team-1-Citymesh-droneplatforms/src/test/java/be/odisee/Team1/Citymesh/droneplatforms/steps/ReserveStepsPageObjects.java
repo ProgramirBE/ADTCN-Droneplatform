@@ -47,9 +47,5 @@ public class ReserveStepsPageObjects {
         String expiry = startPlaces.getExpiryText("SP-101");
         assertTrue(expiry.contains(String.valueOf(minutes)));
     }
-
-    @After
-    public void cleanup() {
-        if (driver != null) driver.quit();
-    }
 }
+
