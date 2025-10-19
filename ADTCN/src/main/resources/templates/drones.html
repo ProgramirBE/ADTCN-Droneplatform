@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Overzicht Drones</title>
+    <link rel="stylesheet" th:href="@{/drones.css}" />
+</head>
+<body>
+<div class="container">
+
+    <h1>Overzicht Drones</h1>
+
+    <div sec:authorize="isAuthenticated()" class="user-greeting">
+        <p>Welkom, <span sec:authentication="name"></span>!</p>
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit" class="btn btn-logout">Logout</button>
+        </form>
+    </div>
+
+    <div sec:authorize="hasRole('ADMIN')" class="admin-section">
+        <p>Dit is alleen zichtbaar voor beheerders.</p>
+        <a th:href="@{/admin/dashboard}" class="btn btn-admin">Admin Dashboard</a>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Selecteer</th>
+            <th>ID</th>
+            <th>Status</th>
+            <th>Locatie</th>
+            <th>Type</th>
+            <th>Batterij</th>
+            <th>Acties</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="drone : ${drones}">
+            <td><input type="radio" name="selectedDroneId" th:value="${drone.droneID}" class="drone-select-radio" /></td>
+            <td th:text="${drone.droneID}"></td>
+            <td th:text="${drone.status}"></td>
+            <td th:text="${drone.locatie}"></td>
+            <td th:text="${drone.type}"></td>
+            <td th:text="${drone.batterij} + '%'"></td>
+            <td>
+                <a th:href="@{/drones/edit/{id}(id=${drone.droneID})}" class="btn btn-edit">Bewerk</a>
+                <form th:action="@{/drones/delete/{id}(id=${drone.droneID})}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-delete">Verwijder</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="actions">
+        <a href="/drones/nieuw" class="btn btn-primary">Nieuwe Drone Toevoegen</a>
+        <a href="/reservaties" class="btn btn-secondary">Bekijk Mijn Reservaties</a>
+    </div>
+
+    <button id="chooseLaunchpadButton" class="btn btn-launch hidden">Kies Startplaats</button>
+
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const radioButtons = document.querySelectorAll('.drone-select-radio');
+        const chooseLaunchpadButton = document.getElementById('chooseLaunchpadButton');
+
+        function updateButtonLink() {
+            const selectedRadio = document.querySelector('input[name="selectedDroneId"]:checked');
+            if (selectedRadio) {
+                chooseLaunchpadButton.href = '/launchpads?droneId=' + selectedRadio.value;
+                chooseLaunchpadButton.classList.remove('hidden');
+            } else {
+                chooseLaunchpadButton.classList.add('hidden');
+            }
+        }
+
+        radioButtons.forEach(radio => {
+            radio.addEventListener('change', updateButtonLink);
+        });
+
+        updateButtonLink();
+
+        chooseLaunchpadButton.addEventListener('click', function () {
+            const selectedRadio = document.querySelector('input[name="selectedDroneId"]:checked');
+            if (selectedRadio) {
+                window.location.href = '/launchpads?droneId=' + selectedRadio.value;
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

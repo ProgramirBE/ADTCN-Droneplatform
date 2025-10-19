@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/admin-dashboard.css}" />
+</head>
+<body>
+<div class="admin-container">
+    <h1>Admin Dashboard</h1>
+
+    <p th:text="${welcomeMessage}"></p>
+
+    <div sec:authorize="isAuthenticated()" class="user-info">
+        <p>Ingelogd als: <strong sec:authentication="name"></strong></p>
+        <p>Rollen: <span sec:authentication="authorities"></span></p>
+    </div>
+
+    <p class="info">Dit is een beveiligde pagina die alleen toegankelijk is voor gebruikers met de rol 'ADMIN'.</p>
+
+    <div class="admin-actions">
+        <a href="/drones" class="back-button">← Terug naar Drones Overzicht</a>
+
+        <form th:action="@{/logout}" method="post" class="logout-form">
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

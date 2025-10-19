@@ -1,0 +1,181 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+.back-button {
+    background-color: #6c757d;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 20px;
+    transition: background-color 0.2s;
+}
+
+.back-button:hover {
+    background-color: #5a6268;
+}
+
+h1 {
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.status-gereserveerd {
+    color: #2196F3;
+    font-weight: bold;
+    background-color: #e3f2fd;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.status-actief {
+    color: #ff9800;
+    font-weight: bold;
+    background-color: #fff3e0;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.status-voltooid {
+    color: #4CAF50;
+    font-weight: bold;
+    background-color: #e8f5e8;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.status-geannuleerd {
+    color: #f44336;
+    font-weight: bold;
+    background-color: #ffebee;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.reservatie-item {
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    padding: 20px;
+    margin: 15px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+
+.reservatie-item:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
+}
+
+.reservatie-item h3 {
+    margin-top: 0;
+    color: #333;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+}
+
+.reservatie-details p {
+    margin: 8px 0;
+    display: flex;
+    align-items: center;
+}
+
+.reservatie-details strong {
+    min-width: 140px;
+    color: #555;
+}
+
+.reservatie-acties {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    margin-right: 10px;
+}
+
+.btn-success {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #45a049;
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    background-color: #f44336;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #da190b;
+    transform: translateY(-1px);
+}
+
+.btn-info {
+    background-color: #2196F3;
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: #1976D2;
+    transform: translateY(-1px);
+}
+
+.active-flight {
+    color: #ff9800;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.completed-flight {
+    color: #4CAF50;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.geen-reservaties {
+    text-align: center;
+    padding: 40px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.geen-reservaties p {
+    margin: 10px 0;
+    color: #666;
+}
+
+.geen-reservaties a {
+    color: #2196F3;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.geen-reservaties a:hover {
+    text-decoration: underline;
+}
