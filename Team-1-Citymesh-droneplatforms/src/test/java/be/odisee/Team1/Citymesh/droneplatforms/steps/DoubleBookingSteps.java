@@ -1,7 +1,7 @@
 package be.odisee.Team1.Citymesh.droneplatforms.steps;
 
 import be.odisee.Team1.Citymesh.droneplatforms.pageobjects.HomePage;
-import be.odisee.Team1.Citymesh.droneplatforms.pageobjects.StartPlacePage;
+import be.odisee.Team1.Citymesh.droneplatforms.pageobjects.StartPlacesPage;
 import be.odisee.Team1.Citymesh.droneplatforms.support.ScenarioContext;
 import io.cucumber.java.en.*;
 import org.assertj.core.api.Assertions;
@@ -10,7 +10,7 @@ public class DoubleBookingSteps {
 
     private final ScenarioContext ctx;
     private HomePage home;
-    private StartPlacePage startPlaces;
+    private StartPlacesPage startPlaces;
     private String spot;
 
     public DoubleBookingSteps(ScenarioContext ctx) { this.ctx = ctx; }

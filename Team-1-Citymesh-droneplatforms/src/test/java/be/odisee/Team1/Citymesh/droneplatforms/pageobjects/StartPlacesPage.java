@@ -3,36 +3,57 @@ package be.odisee.Team1.Citymesh.droneplatforms.pageobjects;
 import org.openqa.selenium.*;
 import java.time.Duration;
 
+
 public class StartPlacesPage {
     private WebDriver driver;
+    private final By tableRows = By.cssSelector("#startplaces tbody tr");
 
     public StartPlacesPage(WebDriver driver) {
         this.driver = driver;
     }
 
-    public void open() {
-        driver.get("http://localhost:8080/start-places"); // adapt to your test app URL
+    public void open(String baseUrl) {
+        driver.get(baseUrl + "/templates/start-places.html");
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(3));
     }
 
-    public void reserveById(String id) {
-        WebElement row = driver.findElement(By.cssSelector("tr[data-id='" + id + "']"));
-        WebElement reserveBtn = row.findElement(By.cssSelector("button.reserve"));
-        reserveBtn.click();
+    public WebElement findRow(String id) {
+        for (WebElement row : driver.findElements(tableRows)) {
+            if (id.equals(row.getAttribute("data-id"))) return row;
+        }
+        return null;
     }
 
     public String getStatus(String id) {
-        WebElement row = driver.findElement(By.cssSelector("tr[data-id='" + id + "']"));
-        return row.findElement(By.cssSelector(".status")).getText();
+        WebElement row = findRow(id);
+        if (row == null) return null;
+        return row.findElement(By.cssSelector(".status")).getText().trim();
     }
 
-    public boolean isReserveButtonVisible(String id) {
-        WebElement row = driver.findElement(By.cssSelector("tr[data-id='" + id + "']"));
-        return !row.findElements(By.cssSelector("button.reserve")).isEmpty();
+    public int getDistance(String id) {
+        WebElement row = findRow(id);
+        if (row == null) return -1;
+        String d = row.getAttribute("data-distance");
+        try { return Integer.parseInt(d); } catch (Exception e) { return -1; }
     }
 
-    public String getExpiryText(String id) {
-        WebElement row = driver.findElement(By.cssSelector("tr[data-id='" + id + "']"));
-        return row.findElement(By.cssSelector(".expiry")).getText();
+    public void clickReserve(String id) {
+        WebElement row = findRow(id);
+        if (row == null) throw new IllegalStateException("Row not found: " + id);
+        WebElement btn = row.findElement(By.cssSelector("button.reserve"));
+        btn.click();
+    }
+
+    public boolean isReserveButtonEnabled(String id) {
+        WebElement row = findRow(id);
+        if (row == null) return false;
+        WebElement btn = row.findElement(By.cssSelector("button.reserve"));
+        return btn.isEnabled();
+    }
+
+    public String getExpiryMinutes(String id) {
+        WebElement row = findRow(id);
+        if (row == null) return null;
+        return row.getAttribute("data-expires-minutes");
     }
 }

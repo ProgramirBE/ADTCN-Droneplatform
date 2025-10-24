@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>CityMesh — Home</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <style>
+        body { font-family: Inter, Roboto, Arial, sans-serif; margin: 0; color: #222; }
+        .navbar { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; background:#0b69ff; color:#fff; }
+        .brand { font-weight:700; font-size:1.1rem; }
+        .nav-links { display:flex; gap:12px; }
+        .nav-links a { color: #fff; text-decoration:none; padding:6px 10px; border-radius:6px; }
+        .nav-links a:hover { background: rgba(255,255,255,0.12); }
+        main { padding: 28px; }
+        .card { background:#fff; border-radius:8px; padding:18px; box-shadow: 0 4px 12px rgba(12,20,40,0.06); max-width:900px; }
+        footer { margin: 40px 0; color:#666; font-size:0.9rem; }
+    </style>
+</head>
+<body>
+<header class="navbar">
+    <div class="brand">CityMesh Drone Platform</div>
+    <nav class="nav-links">
+        <a id="home-link" href="home.html">Home</a>
+        <!-- IMPORTANT: id used by tests/POs -->
+        <a id="start-places-link" href="start-places.html">Start Places</a>
+        <a id="about-link" href="#">About</a>
+    </nav>
+</header>
+
+<main>
+    <div class="card">
+        <h1>Welcome, Pilot</h1>
+        <p>
+            This is a small static test site used for demoing the CityMesh test scenarios.
+            Use the navigation above to go to the <strong>Start Places</strong> page and try reservations.
+        </p>
+
+        <section style="margin-top:12px;">
+            <h3>Quick actions</h3>
+            <ul>
+                <li><a href="start-places.html" id="start-now">Go to Start Places</a></li>
+            </ul>
+        </section>
+
+        <footer>
+            <small>Test environment — static demo pages for Cucumber + Selenium exercises.</small>
+        </footer>
+    </div>
+</main>
+</body>
+</html>

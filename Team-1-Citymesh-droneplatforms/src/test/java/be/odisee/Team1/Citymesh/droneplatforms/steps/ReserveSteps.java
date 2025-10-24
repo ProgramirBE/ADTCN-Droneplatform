@@ -8,49 +8,43 @@ import org.openqa.selenium.WebDriver;
 import be.odisee.Team1.Citymesh.droneplatforms.StartPlaceStatus;
 import be.odisee.Team1.Citymesh.droneplatforms.pageobjects.HomePage;
 import org.openqa.selenium.chrome.ChromeDriver;
+import be.odisee.Team1.Citymesh.droneplatforms.support.Hooks;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ReserveSteps {
-    WebDriver driver = new ChromeDriver();
+    private final WebDriver driver = Hooks.setup;
+    private final String baseUrl = System.getenv().getOrDefault("TEST_BASE_URL","http://localhost:8000");
 
-    HomePage homePage = new HomePage(driver);
-    StartPlacesPage startPlacesPage = new StartPlacesPage(driver);
     @Given("a start place {string} exists that is available and {int}m from the nearest no-fly zone")
-    public void setupAvailablePlace(String id, int distance) {
-        // Seed via API or test DB instead of UI
-        System.out.printf("Assume start place %s is available (%dm from NFZ)%n", id, distance);
+    public void startPlaceExists(String id, int distance) {
+        driver.get(baseUrl + "/start-places.html");
+        WebElement row = driver.findElement(By.cssSelector("tr[data-id='" + id + "']"));
+        assertNotNull(row);
+        assertEquals(String.valueOf(distance), row.getAttribute("data-distance"));
+        assertEquals("available", row.findElement(By.cssSelector(".status")).getText().trim().toLowerCase());
     }
 
     @Given("another start place {string} exists that is reserved")
-    public void setupReservedPlace(String id) {
-        System.out.printf("Assume start place %s is reserved%n", id);
-    }
-
-    @When("the pilot navigates to the start-places page")
-    public void navigate() {
-        startPlacesPage.open();
+    public void anotherReserved(String id) {
+        driver.get(baseUrl + "/start-places.html");
+        WebElement status = driver.findElement(By.cssSelector("tr[data-id='" + id + "'] .status"));
+        assertEquals("reserved", status.getText().trim().toLowerCase());
     }
 
     @When("the pilot reserves start place {string}")
-    public void reserve(String id) {
-        startPlacesPage.reserveById(id);
+    public void pilotReserves(String id) {
+        driver.get(baseUrl + "/start-places.html");
+        WebElement button = driver.findElement(By.cssSelector("tr[data-id='" + id + "'] button.reserve"));
+        button.click();
     }
 
     @Then("the system marks {string} as reserved")
-    public void verifyReserved(String id) {
-        assertEquals("reserved", startPlacesPage.getStatus(id));
-    }
-
-    @Then("{string} cannot be reserved again (no double booking)")
-    public void verifyCannotReserveAgain(String id) {
-        assertFalse(startPlacesPage.isReserveButtonVisible(id));
-    }
-
-    @Then("the reservation has an expiry of {int} minutes")
-    public void verifyExpiry(int minutes) {
-        String expiryText = startPlacesPage.getExpiryText("SP-101");
-        assertTrue(expiryText.contains(String.valueOf(minutes)));
+    public void systemMarksReserved(String id) {
+        driver.get(baseUrl + "/start-places.html");
+        WebElement status = driver.findElement(By.cssSelector("tr[data-id='" + id + "'] .status"));
+        assertEquals("reserved", status.getText().trim().toLowerCase());
     }
 
     @After

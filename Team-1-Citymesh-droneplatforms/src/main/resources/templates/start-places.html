@@ -1,0 +1,83 @@
+<!-- src/test/resources/webapp/start-places.html -->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Start Places - Citymesh Test</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <style>
+        body { font-family: Inter, Roboto, Arial, sans-serif; margin: 0; color:#222; }
+        .navbar { display:flex; align-items:center; justify-content:space-between; padding:12px 20px; background:#0b69ff; color:#fff; }
+        .brand { font-weight:700; font-size:1.05rem; }
+        .nav-links { display:flex; gap:12px; }
+        .nav-links a { color: #fff; text-decoration:none; padding:6px 10px; border-radius:6px; }
+        main { padding: 20px; }
+        table { border-collapse: collapse; width: 85%; margin: 12px 0; background: #fff; border-radius:6px; overflow:hidden; }
+        th, td { border-bottom:1px solid #eee; padding:10px 12px; text-align:left; }
+        button.reserve { padding:6px 10px; border-radius:6px; border:0; background:#0b69ff; color:#fff; cursor:pointer; }
+        button[disabled] { opacity:0.5; cursor:default; }
+        .status { text-transform:lowercase; }
+    </style>
+</head>
+<body>
+<header class="navbar">
+    <div class="brand">CityMesh Drone Platform</div>
+    <nav class="nav-links">
+        <a id="home-link" href="home.html">Home</a>
+        <a id="start-places-link" href="start-places.html">Start Places</a>
+    </nav>
+</header>
+
+<main>
+    <h1>Start Places</h1>
+    <table id="startplaces">
+        <thead>
+        <tr><th>ID</th><th>Distance (m)</th><th>Status</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+        <tr data-id="SP-101" data-distance="60">
+            <td class="id">SP-101</td>
+            <td class="distance">60</td>
+            <td class="status">available</td>
+            <td><button class="reserve">Reserve</button></td>
+        </tr>
+
+        <tr data-id="SP-102" data-distance="40">
+            <td class="id">SP-102</td>
+            <td class="distance">40</td>
+            <td class="status">reserved</td>
+            <td><button class="reserve" disabled>Reserve</button></td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+
+<script>
+    (function () {
+        const rows = document.querySelectorAll("#startplaces tbody tr");
+        rows.forEach(row => {
+            const btn = row.querySelector("button.reserve");
+            if (btn) {
+                btn.addEventListener("click", () => {
+                    const statusEl = row.querySelector(".status");
+                    const distance = parseInt(row.getAttribute("data-distance"), 10) || 0;
+                    if (statusEl.textContent.trim() !== 'available') {
+                        alert("Not available");
+                        return;
+                    }
+                    if (distance < 50) {
+                        alert("Too close to no-fly zone");
+                        return;
+                    }
+                    // Mark reserved
+                    statusEl.textContent = "reserved";
+                    btn.disabled = true;
+                    row.setAttribute("data-reserved-at", Date.now());
+                    row.setAttribute("data-expires-minutes", "10");
+                });
+            }
+        });
+    })();
+</script>
+</body>
+</html>

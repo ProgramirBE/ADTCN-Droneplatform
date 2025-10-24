@@ -1,22 +1,21 @@
 package be.odisee.Team1.Citymesh.droneplatforms;
 
 public class StartPlace {
-    private String id;
-    private double lat;
-    private double lon;
-    private StartPlaceStatus status;
-    private int distanceFromNoFlyZoneMeters;
+    private final String id;
+    private final int distanceMeters;
+    private Status status;
 
-    public StartPlace(String id, double lat, double lon, int distanceFromNoFlyZoneMeters) {
+    public enum Status { AVAILABLE, RESERVED }
+
+    public StartPlace(String id, int distanceMeters) {
         this.id = id;
-        this.lat = lat;
-        this.lon = lon;
-        this.status = StartPlaceStatus.AVAILABLE;
-        this.distanceFromNoFlyZoneMeters = distanceFromNoFlyZoneMeters;
+        this.distanceMeters = distanceMeters;
+        this.status = Status.AVAILABLE;
     }
 
     public String getId() { return id; }
-    public StartPlaceStatus getStatus() { return status; }
-    public void setStatus(StartPlaceStatus status) { this.status = status; }
-    public int getDistanceFromNoFlyZoneMeters() { return distanceFromNoFlyZoneMeters; }
+    public int getDistanceMeters() { return distanceMeters; }
+    public Status getStatus() { return status; }
+    public void setStatus(Status status) { this.status = status; }
 }
+

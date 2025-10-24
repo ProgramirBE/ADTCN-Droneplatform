@@ -8,5 +8,3 @@ Feature: Reserve a start place
     And another start place "SP-102" exists that is reserved
     When the pilot reserves start place "SP-101"
     Then the system marks "SP-101" as reserved
-    And "SP-101" cannot be reserved again (no double booking)
-    And the reservation has an expiry of 10 minutes

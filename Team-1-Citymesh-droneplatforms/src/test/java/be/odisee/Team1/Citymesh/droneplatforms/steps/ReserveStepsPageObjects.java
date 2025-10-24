@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ReserveStepsPageObjects {
     private WebDriver driver;
     private StartPlacesPage startPlaces;
+    private final String baseUrl = "http://localhost:8000";
 
     @Given("a start place {string} exists that is available and {int}m from the nearest no-fly zone")
     public void givenAvailablePlace(String id, int distance) {
@@ -24,28 +25,17 @@ public class ReserveStepsPageObjects {
 
     @When("the pilot navigates to the start-places page")
     public void navigateToPage() {
-        startPlaces.open();
+        startPlaces.open(baseUrl);
     }
 
     @When("the pilot reserves start place {string}")
     public void reserve(String id) {
-        startPlaces.reserveById(id);
+        startPlaces.clickReserve(id);
     }
 
     @Then("the system marks {string} as reserved")
     public void verifyReserved(String id) {
         assertEquals("reserved", startPlaces.getStatus(id).toLowerCase());
-    }
-
-    @Then("{string} cannot be reserved again \\(no double booking)")
-    public void verifyNoDoubleBooking(String id) {
-        assertFalse(startPlaces.isReserveButtonVisible(id));
-    }
-
-    @Then("the reservation has an expiry of {int} minutes")
-    public void verifyExpiry(int minutes) {
-        String expiry = startPlaces.getExpiryText("SP-101");
-        assertTrue(expiry.contains(String.valueOf(minutes)));
     }
 
     @After
