@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Drone Vlucht Simulatie</title>
+    <link rel="stylesheet" th:href="@{/vluchtSimulatie.css}" />
+</head>
+<body>
+<h1>Drone Vlucht Simulatie</h1>
+
+<div th:if="${selectedDrone != null}" class="drone-info">
+    <h2>Vlucht Details</h2>
+    <p><strong>Drone ID:</strong> <span th:text="${selectedDrone.droneID}"></span></p>
+    <p><strong>Locatie:</strong> <span th:text="${locatie}"></span></p>
+    <p><strong>Vluchtstrategie:</strong> <span th:text="${chosenStrategyName}"></span></p>
+    <p><strong>Status:</strong> <span th:text="${selectedDrone.status}"></span></p>
+    <p><strong>Batterij:</strong> <span id="currentBattery" th:text="${selectedDrone.batterij} + '%'"></span></p>
+</div>
+
+<div th:unless="${selectedDrone != null}" class="drone-info">
+    <p>Geen drone geselecteerd voor simulatie. Ga terug naar <a href="/drones">Drones Overzicht</a>.</p>
+</div>
+
+<div id="grid-container" class="grid-container"></div>
+
+<div class="status-message" id="simulation-status">Vlucht gestart...</div>
+
+<div class="controls">
+    <button onclick="window.location.href='/drones'">Terug naar Drones Overzicht</button>
+</div>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const matrix = /*[[${matrix}]]*/ null;
+    const gridSize = /*[[${gridSize}]]*/ 0;
+    const droneId = /*[[${selectedDrone.droneID}]]*/ null;
+    const chosenStrategyName = /*[[${chosenStrategyName}]]*/ 'ecoModeStrategy';
+    const currentBatteryDisplay = document.getElementById('currentBattery');
+    const simulationStatus = document.getElementById('simulation-status');
+
+    let rowIndex = 0;
+    let colIndex = 0;
+    let direction = 1;
+    let intervalId;
+    let cellsVisited = 0;
+    const totalCells = gridSize * gridSize;
+    const distancePerCell = 1;
+    let simulationSpeed = (chosenStrategyName === 'turboModeStrategy') ? 100 : 300;
+
+    const gridContainer = document.getElementById('grid-container');
+    gridContainer.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+
+    const gridCells = [];
+
+    for (let i = 0; i < gridSize; i++) {
+        gridCells[i] = [];
+        for (let j = 0; j < gridSize; j++) {
+            const cell = document.createElement('div');
+            cell.classList.add('grid-cell');
+            cell.dataset.row = i;
+            cell.dataset.col = j;
+            cell.textContent = '';
+            gridContainer.appendChild(cell);
+            gridCells[i][j] = cell;
+        }
+    }
+
+    function visitNextCell() {
+        if (cellsVisited >= totalCells) {
+            clearInterval(intervalId);
+            simulationStatus.textContent = 'Vlucht voltooid!';
+            updateDroneStatusInBackend(droneId, 'INACTIVE');
+            return;
+        }
+
+        const currentCell = gridCells[rowIndex][colIndex];
+        const previouslyCurrent = document.querySelector('.grid-cell.current');
+        if (previouslyCurrent) previouslyCurrent.classList.remove('current');
+
+        currentCell.textContent = matrix[rowIndex][colIndex];
+        currentCell.classList.add('visited', 'current');
+
+        cellsVisited++;
+        simulationStatus.textContent = `Vliegt over cel [${rowIndex}, ${colIndex}]... ${cellsVisited}/${totalCells}`;
+        updateBatteryStatusInBackend(droneId, distancePerCell, chosenStrategyName);
+
+        colIndex += direction;
+
+        if (direction === 1 && colIndex >= gridSize) {
+            colIndex = gridSize - 1;
+            rowIndex++;
+            direction = -1;
+        } else if (direction === -1 && colIndex < 0) {
+            colIndex = 0;
+            rowIndex++;
+            direction = 1;
+        }
+
+        if (rowIndex >= gridSize) {
+            clearInterval(intervalId);
+            simulationStatus.textContent = 'Vlucht voltooid!';
+            updateDroneStatusInBackend(droneId, 'INACTIVE');
+        }
+    }
+
+    function updateBatteryStatusInBackend(droneId, distance, strategy) {
+        fetch(`/api/drone/fly/${droneId}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ distance, strategy })
+        })
+            .then(res => res.json())
+            .then(data => {
+                currentBatteryDisplay.textContent = data.batterij + '%';
+                if (data.batterij < 10) {
+                    simulationStatus.textContent = 'WAARSCHUWING: Batterij is kritisch laag!';
+                    simulationStatus.style.color = 'red';
+                    clearInterval(intervalId);
+                    updateDroneStatusInBackend(droneId, 'DEFECT');
+                } else if (data.batterij < 20) {
+                    simulationStatus.textContent = 'Let op: Batterij is laag!';
+                    simulationStatus.style.color = 'orange';
+                } else {
+                    simulationStatus.style.color = '#007bff';
+                }
+            }).catch(error => {
+            simulationStatus.textContent = 'Fout bij batterij update!';
+            simulationStatus.style.color = 'red';
+            clearInterval(intervalId);
+        });
+    }
+
+    function updateDroneStatusInBackend(droneId, newStatus) {
+        fetch(`/api/drone/status/${droneId}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ status: newStatus })
+        })
+            .then(res => res.text())
+            .then(() => window.location.href = '/matrix-meldingen')
+            .catch(error => {
+                simulationStatus.textContent = 'Fout bij voltooien vlucht: ' + error.message;
+                simulationStatus.style.color = 'red';
+            });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (matrix && gridSize > 0 && droneId && chosenStrategyName) {
+            intervalId = setInterval(visitNextCell, simulationSpeed);
+        } else {
+            simulationStatus.textContent = 'Onvoldoende gegevens voor simulatie.';
+            simulationStatus.style.color = 'red';
+        }
+    });
+    /*]]>*/
+</script>
+</body>
+</html>

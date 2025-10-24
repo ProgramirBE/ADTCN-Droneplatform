@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Checkpoints</title>
+    <link rel="stylesheet" th:href="@{/checkpoints.css}" />
+</head>
+<body>
+<h1>Checkpoints</h1>
+<ul>
+    <li th:each="point : ${checkpoints}" th:text="${point}"></li>
+</ul>
+</body>
+</html>

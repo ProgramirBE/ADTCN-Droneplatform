@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Matrix Meldingen</title>
+    <link rel="stylesheet" th:href="@{/matrixMeldingen.css}" />
+</head>
+<body>
+<div class="container">
+    <h1>Overzicht Matrix Meldingen</h1>
+
+    <p>Dit rapport toont meldingen voor overbevolking in de gesimuleerde matrix.</p>
+    <p>Limiet voor overbevolking: <strong th:text="${overcrowdLimit}">70</strong> personen.</p>
+
+    <h2>Gegenereerde Matrix</h2>
+    <div id="grid-display-container">
+        <div th:each="row : ${matrix}"
+             th:style="'grid-template-columns: repeat(' + ${gridSize} + ', 1fr);'"
+             class="matrix-row">
+            <div th:each="cellValue : ${row}"
+                 th:classappend="${cellValue > overcrowdLimit ? 'overcrowded' : ''}"
+                 class="grid-cell">
+                <span th:text="${cellValue}"></span>
+            </div>
+        </div>
+    </div>
+
+    <h2>Meldingen</h2>
+    <div th:if="${meldingen.isEmpty()}" class="no-meldingen">
+        <p>Geen overbevolkingsmeldingen gevonden voor deze matrix en limiet.</p>
+    </div>
+    <div th:unless="${meldingen.isEmpty()}">
+        <div th:each="melding : ${meldingen}" class="melding-item">
+            <p><strong>Beschrijving:</strong> <span th:text="${melding.beschrijving}"></span></p>
+            <p><strong>Status:</strong> <span th:text="${melding.status}"></span></p>
+            <p><strong>Tijd:</strong> <span th:text="${#dates.format(melding.tijdstip, 'dd-MM-yyyy HH:mm:ss')}"></span></p>
+        </div>
+    </div>
+
+    <a href="/drones" class="back-button">Terug naar Drones Overzicht</a>
+</div>
+</body>
+</html>

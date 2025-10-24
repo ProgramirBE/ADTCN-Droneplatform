@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Depot Drone</title>
+    <link rel="stylesheet" th:href="@{/send-to-depot.css}" />
+</head>
+<body>
+<h1>Drone naar Depot sturen</h1>
+<form method="post" th:action="@{/drones/depot}">
+    <label>
+        <select name="droneId">
+            <option th:each="drone : ${droneList}" th:value="${drone.id}" th:text="${drone.naam}"></option>
+        </select>
+    </label>
+    <button type="submit">Stuur naar depot</button>
+</form>
+</body>
+</html>

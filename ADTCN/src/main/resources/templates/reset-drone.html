@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Reset Drone</title>
+    <link rel="stylesheet" th:href="@{/reset-drone.css}" />
+</head>
+<body>
+<h1>Reset Defecte Drone</h1>
+<form method="post" th:action="@{/drones/reset}">
+    <label>
+        <select name="droneId">
+            <option th:each="drone : ${defectDrones}" th:value="${drone.droneID}" th:text="${drone.locatie}"></option>
+        </select>
+    </label>
+    <button type="submit">Reset</button>
+</form>
+</body>
+</html>
