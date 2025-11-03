@@ -1,3 +1,4 @@
+@US002 @ui
 Feature: Startplaatsen bekijken en reserveren
 
   # US002: Als piloot kan ik beschikbare startplaatsen zien en reserveren,

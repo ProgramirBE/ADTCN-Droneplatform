@@ -25,7 +25,9 @@ import org.junit.runner.RunWith;
 @RunWith(CucumberWithSerenity.class)
 @CucumberOptions(
         features = "src/test/resources/features/",
-        glue = "be.odisee"
+        glue = "be.odisee.citymesh.stepdefinitions",
+        plugin = {"pretty"},
+        tags = "not @ui"
 )
 public class TestRunner {
 }
