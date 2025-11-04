@@ -1,7 +1,9 @@
 package be.odisee.citymesh.stepdefinitions;
 
 import be.odisee.citymesh.domain.Drone;
+import be.odisee.citymesh.service.DroneService;
 import be.odisee.citymesh.domain.Melding;
+import be.odisee.citymesh.service.impl.DroneServiceImpl;
 import io.cucumber.java.nl.Gegeven;
 import io.cucumber.java.nl.Als;
 import io.cucumber.java.nl.Dan;
@@ -13,6 +15,7 @@ import static org.junit.Assert.*;
 public class ReparatieStatusSteps
 {
     private Drone drone;
+    private DroneService droneService = new DroneServiceImpl();
     private Melding melding;
     private String foutmelding;
     private boolean onderdelenBeschikbaar = true;
@@ -29,13 +32,13 @@ public class ReparatieStatusSteps
 
     @Gegeven("de mechanieker beoordeelt dat reparatie ter plaatse niet mogelijk is")
     public void de_mechanieker_beoordeelt_dat_reparatie_ter_plaats_niet_mogelijk_is() {
-        // geen directe actie nodig in deze simulatie
+
     }
 
     @Als("de mechanieker de drone inspecteert en repareert")
     public void de_mechanieker_de_drone_inspecteert_en_repareert() {
         if (onderdelenBeschikbaar) {
-            drone.resetStatus(); // terug naar INACTIVE
+            droneService.resetDroneStatus(drone);
         }
     }
 
@@ -48,8 +51,7 @@ public class ReparatieStatusSteps
 
     @Als("de mechanieker de drone markeert voor verzending naar het depot")
     public void de_mechanieker_de_drone_markeert_voor_verzending_naar_het_depot() {
-        // markeer als gereserveerd voor verzending
-        drone.setStatus(Drone.DroneStatus.RESERVED);
+        droneService.reserveerDrone(drone);
     }
 
     @Dan("moet de status van de drone veranderen naar {string}")
@@ -69,7 +71,7 @@ public class ReparatieStatusSteps
 
     @En("wanneer de mechanieker de status reset, moet de drone {string} zijn")
     public void wanneer_de_mechanieker_de_status_reset_moet_de_drone_zijn(String verwachteStatus) {
-        drone.resetStatus();
+        droneService.resetDroneStatus(drone);
         assertEquals(Drone.DroneStatus.valueOf(verwachteStatus.toUpperCase()), drone.getStatus());
     }
 }

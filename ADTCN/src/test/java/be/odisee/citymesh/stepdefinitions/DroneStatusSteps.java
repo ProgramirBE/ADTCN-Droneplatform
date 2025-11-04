@@ -1,6 +1,9 @@
 package be.odisee.citymesh.stepdefinitions;
 
 import be.odisee.citymesh.domain.Drone;
+import be.odisee.citymesh.domain.Melding;
+import be.odisee.citymesh.service.DroneService;
+import be.odisee.citymesh.service.impl.DroneServiceImpl;
 import io.cucumber.java.nl.Gegeven;
 import io.cucumber.java.nl.Als;
 import io.cucumber.java.nl.Dan;
@@ -10,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DroneStatusSteps {
     private Drone drone;
+    private DroneService droneService = new DroneServiceImpl();
 
     @Gegeven("een drone met status {string}")
     public void een_drone_met_status(@NotNull String status) {
@@ -19,26 +23,18 @@ public class DroneStatusSteps {
 
     @Als("de piloot een startcommand geeft")
     public void de_piloot_een_startcommand_geeft() {
-        // Simuleer reserveren en starten zonder service calls
-        if (drone.getStatus() == Drone.DroneStatus.INACTIVE) {
-            drone.setStatus(Drone.DroneStatus.RESERVED);
-        }
-        if (drone.getStatus() == Drone.DroneStatus.RESERVED) {
-            drone.setStatus(Drone.DroneStatus.INFLIGHT);
-        }
+        droneService.reserveerDrone(drone);
+        droneService.startDroneVlucht(drone);
     }
 
     @Als("de drone landt op een geautoriseerde locatie")
     public void de_drone_landt_op_een_geautoriseerde_locatie() {
-        // Reset naar INACTIVE
-        drone.resetStatus();
+        droneService.resetDroneStatus(drone);
     }
 
     @Als("de batterij bijna leeg is")
     public void de_batterij_bijna_leeg_is() {
-        // Simuleer low battery -> CHARGING
-        drone.setBatterij(5);
-        drone.setStatus(Drone.DroneStatus.CHARGING);
+        droneService.startCharging(drone.getDroneID());
     }
 
     @Dan("moet de drone-status veranderen naar {string}")
@@ -48,10 +44,10 @@ public class DroneStatusSteps {
 
     @Als("de batterij {int}% bereikt")
     public void deBatterijBereikt(int charge) {
-        // Simuleer opladen tot een bepaald niveau
-        drone.setBatterij(charge);
-        if (charge >= 100) {
-            drone.setStatus(Drone.DroneStatus.INACTIVE);
+        droneService.chargeBatterij(drone.getDroneID());
+        if (drone.getBatterij() != charge){
+            drone.setStatus(Drone.DroneStatus.DEFECT);
         }
+        //System.out.println(drone.getBatterij());
     }
 }
