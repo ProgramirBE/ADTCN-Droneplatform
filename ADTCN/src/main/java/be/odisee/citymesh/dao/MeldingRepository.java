@@ -11,6 +11,19 @@ import java.util.List;
  * Deze interface maakt gebruik van Spring Data JPA en biedt standaard CRUD-functionaliteit.
  */
 public interface MeldingRepository extends JpaRepository<Melding, Integer> {
-    List<Melding> findAll();
+
+    /**
+     * Slaat een {@link Melding} op in de database.
+     *
+     * @param melding het melding-object dat moet worden opgeslagen
+     * @return de opgeslagen melding met gegenereerd ID
+     */
     Melding save(Melding melding);
+
+    /**
+     * Haalt alle meldingen op uit de database.
+     *
+     * @return een lijst van alle {@link Melding}-objecten
+     */
+    List<Melding> findAll();
 }

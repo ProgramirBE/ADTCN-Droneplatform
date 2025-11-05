@@ -3,7 +3,6 @@ package be.odisee.citymesh.dao;
 import be.odisee.citymesh.domain.Reservatie;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 
 /**
@@ -15,7 +14,20 @@ import java.util.List;
  */
 @Repository
 public interface ReservatieRepository extends JpaRepository<Reservatie, Integer> {
-    // keep only custom query methods; standard CRUD methods (findById, save, deleteById, findAll) come from JpaRepository
+
+    /**
+     * Haalt alle reservaties op voor een bepaalde drone.
+     *
+     * @param droneId de ID van de drone
+     * @return een lijst met alle bijhorende reservaties
+     */
     List<Reservatie> findByDroneId(int droneId);
+
+    /**
+     * Haalt alle reservaties met een specifieke status op.
+     *
+     * @param status de gewenste reservatiestatus (bv. GERESERVEERD, ACTIEF, VOLTOOID)
+     * @return een lijst met reservaties in die status
+     */
     List<Reservatie> findByStatus(Reservatie.ReservatieStatus status);
 }
