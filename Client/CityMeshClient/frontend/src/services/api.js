@@ -32,6 +32,11 @@ export default {
   getReservationsByLaunchpad: (launchpadId) => api.get(`/reservations/launchpad/${launchpadId}`),
   createReservation: (reservation) => api.post('/reservations', reservation),
   cancelReservation: (id) => api.put(`/reservations/${id}/cancel`),
-  deleteReservation: (id) => api.delete(`/reservations/${id}`)
+  deleteReservation: (id) => api.delete(`/reservations/${id}`),
+
+  // Mechanic operations
+  updateDroneStatus: (droneId, userId, status) => api.put(`/mechanic/drone/${droneId}/status`, { userId, status }),
+  updateDroneBattery: (droneId, userId, batteryLevel) => api.put(`/mechanic/drone/${droneId}/battery`, { userId, batteryLevel }),
+  resetDrone: (droneId, userId) => api.put(`/mechanic/drone/${droneId}/reset`, { userId })
 }
 

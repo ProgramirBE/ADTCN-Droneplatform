@@ -42,14 +42,15 @@ public class AuthController {
                     .body(Map.of("error", "Mot de passe incorrect"));
         }
 
-        // Retourner les infos de l'utilisateur
+        // Retourner les infos de l'utilisateur avec ses rôles
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
         response.put("user", Map.of(
                 "id", user.getId(),
                 "username", user.getUsername(),
                 "fullname", user.getFullname(),
-                "email", user.getEmail()
+                "email", user.getEmail(),
+                "roles", user.getRoles()
         ));
 
         return ResponseEntity.ok(response);

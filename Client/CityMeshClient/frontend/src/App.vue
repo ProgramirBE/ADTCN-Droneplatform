@@ -59,6 +59,7 @@
                 <th>Model</th>
                 <th>Status</th>
                 <th>Batterij</th>
+                <th v-if="isMechanic()">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -66,11 +67,32 @@
                 <td>{{ d.id }}</td>
                 <td>{{ d.name }}</td>
                 <td>{{ d.model }}</td>
-                <td><span :class="'badge badge-' + d.status.toLowerCase().replace(/ /g, '-')">{{ d.status }}</span></td>
                 <td>
-                  <div class="battery">
+                  <span v-if="!editingDrone[d.id]" :class="'badge badge-' + d.status.toLowerCase().replace(/ /g, '-')">
+                    {{ d.status }}
+                  </span>
+                  <select v-else v-model="droneEdits[d.id].status" class="edit-select">
+                    <option value="Vliegklaar">Vliegklaar</option>
+                    <option value="In Onderhoud">In Onderhoud</option>
+                    <option value="In Gebruik">In Gebruik</option>
+                    <option value="Wacht op Verzending">Wacht op Verzending</option>
+                  </select>
+                </td>
+                <td>
+                  <div v-if="!editingDrone[d.id]" class="battery">
                     <div :style="{width: d.batteryLevel + '%'}" :class="batteryClass(d.batteryLevel)"></div>
                     <span>{{ d.batteryLevel }}%</span>
+                  </div>
+                  <input v-else v-model.number="droneEdits[d.id].batteryLevel" type="number" min="0" max="100" class="edit-input">
+                </td>
+                <td v-if="isMechanic()">
+                  <div class="action-buttons">
+                    <button v-if="!editingDrone[d.id]" @click="startEditDrone(d)" class="btn-edit">✏️ Modifier</button>
+                    <template v-else>
+                      <button @click="saveDrone(d.id)" class="btn-save">💾 Sauver</button>
+                      <button @click="cancelEdit(d.id)" class="btn-cancel-edit">❌</button>
+                    </template>
+                    <button @click="resetDroneStatus(d.id)" class="btn-reset">🔄 Reset</button>
                   </div>
                 </td>
               </tr>
@@ -218,7 +240,9 @@ export default {
         launchpadId: null,
         startTime: '',
         endTime: ''
-      }
+      },
+      editingDrone: {},
+      droneEdits: {}
     }
   },
   mounted() {
@@ -307,6 +331,52 @@ export default {
       if (!dateStr) return ''
       return new Date(dateStr).toLocaleString('fr-BE')
     },
+    isMechanic() {
+      if (!this.user || !this.user.roles) return false
+      return this.user.roles.some(role => role.name === 'Mechanieker')
+    },
+    startEditDrone(drone) {
+      this.editingDrone[drone.id] = true
+      this.droneEdits[drone.id] = {
+        status: drone.status,
+        batteryLevel: drone.batteryLevel
+      }
+    },
+    cancelEdit(droneId) {
+      delete this.editingDrone[droneId]
+      delete this.droneEdits[droneId]
+    },
+    async saveDrone(droneId) {
+      try {
+        const edits = this.droneEdits[droneId]
+        const drone = this.drones.find(d => d.id === droneId)
+
+        // Modifier le statut si changé
+        if (edits.status !== drone.status) {
+          await api.updateDroneStatus(droneId, this.user.id, edits.status)
+        }
+
+        // Modifier la batterie si changée
+        if (edits.batteryLevel !== drone.batteryLevel) {
+          await api.updateDroneBattery(droneId, this.user.id, edits.batteryLevel)
+        }
+
+        this.cancelEdit(droneId)
+        await this.loadData()
+      } catch (err) {
+        alert(err.response?.data?.error || 'Erreur lors de la modification')
+      }
+    },
+    async resetDroneStatus(droneId) {
+      if (confirm('Réinitialiser ce drone (Status: Vliegklaar, Batterie: 100%) ?')) {
+        try {
+          await api.resetDrone(droneId, this.user.id)
+          await this.loadData()
+        } catch (err) {
+          alert(err.response?.data?.error || 'Erreur lors de la réinitialisation')
+        }
+      }
+    },
     batteryClass(level) {
       return level >= 70 ? 'high' : level >= 30 ? 'med' : 'low'
     }
@@ -380,5 +450,13 @@ code { background: #f4f4f4; padding: 3px 6px; border-radius: 4px; font-family: m
 
 .badge-confirmed { background: #d4edda; color: #155724; }
 .badge-cancelled { background: #f8d7da; color: #721c24; }
+
+.action-buttons { display: flex; gap: 5px; flex-wrap: wrap; }
+.btn-edit { padding: 6px 12px; background: #ffc107; color: #000; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; }
+.btn-save { padding: 6px 12px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; }
+.btn-cancel-edit { padding: 6px 12px; background: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; }
+.btn-reset { padding: 6px 12px; background: #17a2b8; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85em; }
+.edit-select, .edit-input { padding: 6px; border: 2px solid #667eea; border-radius: 4px; font-size: 0.9em; }
+.edit-input { width: 80px; }
 </style>
 
