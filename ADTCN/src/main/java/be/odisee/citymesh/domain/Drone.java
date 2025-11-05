@@ -1,22 +1,22 @@
 package be.odisee.citymesh.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Enumerated;
-import javax.persistence.EnumType;
-
+import javax.persistence.*;
 
 @Entity
+@Table(name = "drones")
 public class Drone {
+    // Inclure toutes les constantes utilisées par l'ancien code pour éviter les erreurs de compilation
     public enum DroneStatus {
         INACTIVE,
         INFLIGHT,
         CHARGING,
         RESERVED,
         DEFECT,
-        MAINTENANCE
+        MAINTENANCE,
+        Vliegklaar,
+        In_Onderhoud,
+        In_Gebruik,
+        Wacht_op_Verzending
     }
 
     public enum DroneType {
@@ -37,67 +37,79 @@ public class Drone {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int droneID;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "model")
+    private String model;
 
     @Enumerated(EnumType.STRING)
-    private DroneType type;
-
-    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
     private DroneStatus status;
 
-    private String locatie;
-    private int batterij;
+    @Column(name = "battery_level")
+    private Integer batteryLevel;
 
-    public Drone(DroneStatus status, String locatie, DroneType type, int batterij) {
-        this.status = status;
-        this.locatie = locatie;
-        this.type = type;
-        this.batterij = batterij;
-    }
+    // legacy fields are represented via methods delegating to the persisted fields
 
     public Drone() {}
 
+    public Drone(DroneStatus status, String name, DroneType type, Integer batteryLevel) {
+        this.status = status;
+        this.name = name;
+        this.model = (type != null) ? type.name() : null; // store type name in model if provided
+        this.batteryLevel = batteryLevel;
+    }
+
+    // New-style getters/setters
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getModel() { return model; }
+    public void setModel(String model) { this.model = model; }
+
+    public DroneStatus getStatus() { return status; }
+    public void setStatus(DroneStatus status) { this.status = status; }
+
+    public Integer getBatteryLevel() { return batteryLevel; }
+    public void setBatteryLevel(Integer batteryLevel) { this.batteryLevel = batteryLevel; }
+
+    // Legacy compatibility methods expected by existing service/controller code
+
+    // getDroneID / setDroneID
+    public int getDroneID() { return (id != null) ? id.intValue() : 0; }
+    public void setDroneID(int droneID) { this.id = droneID; }
+
+    // getLocatie / setLocatie : map to name (best effort)
+    public String getLocatie() { return this.name; }
+    public void setLocatie(String locatie) { this.name = locatie; }
+
+    // getBatterij / setBatterij : map to batteryLevel
+    public int getBatterij() { return (this.batteryLevel != null) ? this.batteryLevel.intValue() : 0; }
+    public void setBatterij(int batterij) { this.batteryLevel = batterij; }
+
+    // getType / setType : map DroneType to model string
+    public DroneType getType() {
+        if (this.model == null) return null;
+        try {
+            return DroneType.valueOf(this.model);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
+    }
+    public void setType(DroneType type) {
+        this.model = (type != null) ? type.name() : null;
+    }
+
+    // resetStatus : restore to INACTIVE
     public void resetStatus() {
         this.status = DroneStatus.INACTIVE;
-    }
-
-    public int getDroneID() {
-        return droneID;
-    }
-
-    public void setDroneID(int droneID) {
-        this.droneID = droneID;
-    }
-
-    public DroneStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(DroneStatus status) {
-        this.status = status;
-    }
-
-    public String getLocatie() {
-        return locatie;
-    }
-
-    public void setLocatie(String locatie) {
-        this.locatie = locatie;
-    }
-
-    public DroneType getType() {
-        return type;
-    }
-
-    public void setType(DroneType type) {
-        this.type = type;
-    }
-
-    public int getBatterij() {
-        return batterij;
-    }
-    public void setBatterij(int batterij) {
-        this.batterij = batterij;
     }
 }
