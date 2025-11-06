@@ -1,78 +1,25 @@
-# Frontend Vue - CityMesh Drone Platform
+Frontend Vue CityMesh Drone Platform.
 
-Application Vue 3 + Vite pour la gestion de drones.
+Application Vue 3 + Vite voor dronebeheer.
 
-## Pré-requis
-- Node.js 18+ et npm
-- Backend Spring Boot sur http://localhost:8081
-- Base MySQL avec données importées (voir instructions ci-dessous)
+Vereisten zijn Node.js 18+ en npm, backend Spring Boot op http://localhost:8081 en MySQL database met geïmporteerde data.
 
-## Installation
+Installatie: ga naar Client/CityMeshClient/frontend en voer npm install uit.
 
-```bash
-cd Client/CityMeshClient/frontend
-npm install
-```
+Start in ontwikkelmodus met npm run dev.
 
-## Lancement (développement)
+Frontend is bereikbaar op http://localhost:5173 of op 5174 als de poort bezet is.
 
-```bash
-npm run dev
-```
+Voor database importeer dump bestand.
 
-Le frontend sera disponible sur **http://localhost:5173** (ou 5174 si le port est occupé)
+Methode 1: via phpMyAdmin op http://localhost:8082, log in met user citymeshuser en pass citymeshpwd en importeer ADTCN/src/main/resources/db.sql.
 
-## Import de la base de données
+Methode 2: via Docker CLI met docker exec -i mysql-db mysql -ucitymeshuser -pcitymeshpwd citymesh < ADTCN/src/main/resources/db.sql.
 
-Avant de lancer l'application, importez le dump SQL :
+Volledige start met Docker Compose: ga naar ADTCN map, voer docker compose up -d uit voor MySQL phpMyAdmin en Java app, check logs met docker compose logs -f app en stop alles met docker compose down.
 
-### Méthode 1 : Via phpMyAdmin (http://localhost:8082)
-1. Accéder à http://localhost:8082
-2. Connectez-vous (user: `citymeshuser`, pass: `citymeshpwd`)
-3. Importez le fichier `ADTCN/src/main/resources/db.sql`
+Beschikbare API endpoints zijn GET/POST/PUT/DELETE voor /api/drones en varianten, GET /api/launchpads en /api/launchpads/safe, en GET /api/users.
 
-### Méthode 2 : Via Docker CLI
-```bash
-docker exec -i mysql-db mysql -ucitymeshuser -pcitymeshpwd citymesh < ADTCN/src/main/resources/db.sql
-```
+Structuur bevat Entities zoals User Drone Launchpad Flight Reservation, Repositories met JpaRepository, en Controllers met volledige CRUD REST API.
 
-## Lancement complet avec Docker Compose
-
-Dans le dossier `ADTCN` :
-
-```bash
-# Démarrer les containers (MySQL + phpMyAdmin + App Java)
-docker compose up -d
-
-# Vérifier les logs
-docker compose logs -f app
-
-# Arrêter
-docker compose down
-```
-
-## API REST disponibles
-
-- `GET /api/drones` - Liste tous les drones
-- `GET /api/drones/{id}` - Détails d'un drone
-- `POST /api/drones` - Créer un drone
-- `PUT /api/drones/{id}` - Modifier un drone
-- `DELETE /api/drones/{id}` - Supprimer un drone
-
-- `GET /api/launchpads` - Liste des launchpads
-- `GET /api/launchpads/safe` - Launchpads sûrs uniquement
-
-- `GET /api/users` - Liste des utilisateurs
-
-## Structure
-
-- **Entities** : `User`, `Drone`, `Launchpad`, `Flight`, `Reservation`
-- **Repositories** : JpaRepository pour chaque entité
-- **Controllers** : REST API CRUD complètes
-
-## Notes
-
-- CSRF désactivé pour simplifier le développement
-- CORS configuré pour accepter localhost:*
-- Authentification désactivée temporairement (à activer en production)
-
+Notities: CSRF is uitgeschakeld voor eenvoud, CORS staat localhost:* toe, en authenticatie is tijdelijk uitgeschakeld maar moet in productie weer aan.

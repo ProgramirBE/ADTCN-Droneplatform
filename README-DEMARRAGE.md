@@ -1,187 +1,36 @@
-# 🚁 CityMesh Droneplatform - Guide de démarrage
+CityMesh Droneplatform handleiding.
 
-## 📋 Prérequis
+Vereisten: Docker Desktop geïnstalleerd en actief, Node.js 18+ en npm.
 
-- Docker Desktop installé et démarré
-- Node.js 18+ et npm
+Stap 1: start backend (Spring Boot + MySQL).  
+Ga naar C:\droneplatform\ADTCN-Droneplatform en voer docker-compose up -d uit om MySQL, phpMyAdmin en de Java app te starten.  
+Controleer met docker ps of drie containers draaien: epbva-cucumber-app op poort 8081, mysql-db op 3306 en phpmyadmin op 8082.
 
-## 🚀 Lancement de l'application complète
+Stap 2: start frontend (Vue.js).  
+Open een nieuwe terminal, ga naar C:\droneplatform\ADTCN-Droneplatform\Client\CityMeshClient\frontend, voer npm install uit en daarna npm run dev.
 
-### 1️⃣ Démarrer le backend (Spring Boot + MySQL)
+Toegangs-URLs:  
+Frontend op http://localhost:5173  
+API backend op http://localhost:8081/api/drones  
+phpMyAdmin op http://localhost:8082 met login citymeshuser / citymeshpwd en server db.
 
-```powershell
-# Aller dans le dossier du projet
-cd C:\droneplatform\ADTCN-Droneplatform
+Controle:  
+Test API met curl http://localhost:8081/api/drones, /api/users of /api/launchpads.  
+Frontend opent op http://localhost:5173 met drie tabs (Drones, Launchpads, Gebruikers) en data uit MySQL.
 
-# Démarrer Docker Compose (MySQL + phpMyAdmin + App Java)
-docker-compose up -d
+Problemen oplossen:  
+Als containers niet starten, gebruik docker-compose down -v en daarna docker-compose up -d en controleer logs met docker-compose logs -f.  
+Als API 404 geeft, ga naar ADTCN map, run mvn clean package -DskipTests en herstart met docker-compose restart app.  
+Als frontend geen data laadt, controleer API op http://localhost:8081/api/drones, bekijk consolefouten (F12) en controleer proxy-instellingen in vite.config.js.
 
-# Vérifier que les containers tournent
-docker ps
-```
+Data-structuur bevat Drones, Launchpads en Users met id, naam, status en tijdstempels.
 
-Vous devriez voir 3 containers :
-- `epbva-cucumber-app` (port 8081) - Application Spring Boot
-- `mysql-db` (port 3306) - Base de données MySQL
-- `phpmyadmin` (port 8082) - Interface phpMyAdmin
+Om de app te stoppen, druk Ctrl+C in frontend-terminal en voer in projectmap docker-compose down uit.
 
-### 2️⃣ Démarrer le frontend (Vue.js)
+Belangrijk: H2 is volledig verwijderd, enkel MySQL wordt gebruikt, data wordt persistent opgeslagen, CORS is geconfigureerd en frontend gebruikt Vite proxy.
 
-```powershell
-# Ouvrir un nouveau terminal
-cd C:\droneplatform\ADTCN-Droneplatform\Client\CityMeshClient\frontend
+Bereikte doelen: Spring Boot monoliet met MySQL persistentie in Docker, phpMyAdmin voor beheer, volledige REST API, Vue.js frontend, alles draait via Docker op poort 8081.
 
-# Installer les dépendances (première fois seulement)
-npm install
+Voor demonstratie: start docker-compose up -d, wacht 30 seconden, open http://localhost:5173, toon drie tabs, open phpMyAdmin op http://localhost:8082 en laat zien dat data uit MySQL komt.
 
-# Lancer le serveur de développement
-npm run dev
-```
-
-## 🌐 URLs d'accès
-
-| Service | URL | Description |
-|---------|-----|-------------|
-| **Frontend Vue.js** | http://localhost:5173 | Interface utilisateur |
-| **API REST** | http://localhost:8081/api/drones | Backend Spring Boot |
-| **phpMyAdmin** | http://localhost:8082 | Administration MySQL |
-
-### Credentials phpMyAdmin
-- **Serveur** : `db`
-- **Username** : `citymeshuser`
-- **Password** : `citymeshpwd`
-
-## ✅ Vérifications
-
-### Test API
-```powershell
-# Tester l'API drones
-curl http://localhost:8081/api/drones
-
-# Tester l'API users
-curl http://localhost:8081/api/users
-
-# Tester l'API launchpads
-curl http://localhost:8081/api/launchpads
-```
-
-### Test Frontend
-Ouvrir http://localhost:5173 dans le navigateur - vous devriez voir :
-- ✅ L'interface CityMesh
-- ✅ 3 onglets : Drones, Launchpads, Utilisateurs
-- ✅ Données chargées depuis MySQL
-
-## 🔧 Si ça ne marche pas
-
-### Problème : Les containers ne démarrent pas
-
-```powershell
-# Arrêter et supprimer tous les containers
-docker-compose down -v
-
-# Redémarrer
-docker-compose up -d
-
-# Voir les logs
-docker-compose logs -f
-```
-
-### Problème : L'API retourne 404
-
-```powershell
-# Rebuild l'application
-cd C:\droneplatform\ADTCN-Droneplatform\ADTCN
-mvn clean package -DskipTests
-
-# Redémarrer le container
-docker-compose restart app
-```
-
-### Problème : Le frontend ne charge pas les données
-
-1. Vérifier que l'API fonctionne : http://localhost:8081/api/drones
-2. Vérifier la console du navigateur (F12) pour voir les erreurs
-3. Vérifier que le proxy Vite est configuré dans `vite.config.js`
-
-## 📊 Structure des données
-
-### Drones
-```json
-{
-  "id": 1,
-  "name": "Drone A",
-  "model": "DJI X1",
-  "status": "Vliegklaar",
-  "batteryLevel": 100,
-  "createdAt": "2025-11-05T14:14:26"
-}
-```
-
-### Launchpads
-```json
-{
-  "id": 1,
-  "name": "LP Noord",
-  "latitude": 50.855,
-  "longitude": 4.35,
-  "isSafe": true,
-  "createdAt": "2025-11-05T14:14:26"
-}
-```
-
-### Users
-```json
-{
-  "id": 1,
-  "username": "pilot1",
-  "fullname": "Piloot Een",
-  "email": "pilot1@example.com",
-  "createdAt": "2025-11-05T14:14:26"
-}
-```
-
-## 🛑 Arrêter l'application
-
-```powershell
-# Arrêter le frontend (Ctrl+C dans le terminal)
-
-# Arrêter les containers Docker
-cd C:\droneplatform\ADTCN-Droneplatform
-docker-compose down
-```
-
-## 📝 Notes importantes
-
-- ✅ H2 a été **complètement supprimé** du pom.xml
-- ✅ L'application utilise **uniquement MySQL**
-- ✅ Les données sont **persistées** dans MySQL
-- ✅ CORS est configuré pour permettre les appels depuis le frontend
-- ✅ Le frontend utilise un **proxy Vite** pour éviter les problèmes CORS
-
-## 🎯 Objectifs atteints
-
-- [x] Application Spring Boot monolithe
-- [x] Persistance MySQL dans Docker
-- [x] phpMyAdmin pour administrer la DB
-- [x] API REST complète (GET, POST, PUT, DELETE)
-- [x] Frontend Vue.js qui consomme l'API
-- [x] Application fonctionne sur port 8081 dans Docker
-
-## 🚀 Pour montrer au prof
-
-1. Lancer `docker-compose up -d`
-2. Attendre 30 secondes
-3. Ouvrir http://localhost:5173
-4. Montrer les 3 onglets (Drones, Launchpads, Users)
-5. Ouvrir http://localhost:8082 (phpMyAdmin) pour montrer la DB
-6. Montrer que les données viennent bien de MySQL
-
-## 📞 Troubleshooting rapide
-
-| Problème | Solution |
-|----------|----------|
-| Port 3306 occupé | `netstat -ano \| findstr :3306` puis tuer le processus |
-| Port 8081 occupé | Vérifier qu'aucune autre app Spring Boot ne tourne |
-| "Empty reply from server" | Attendre que Spring Boot démarre (30-40s) |
-| Frontend ne charge rien | Vérifier `docker-compose logs app` |
-
+Snelle probleemoplossing: bij poort 3306 gebruik netstat -ano | findstr :3306 en stop het proces, bij poort 8081 check of geen andere Spring Boot app draait, bij lege reactie even wachten tot app start, bij frontend die niets laadt controleer docker-compose logs app.
