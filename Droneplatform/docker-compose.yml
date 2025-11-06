@@ -1,0 +1,87 @@
+name: epbva-cucumber
+
+services:
+  db:
+    image: mysql:latest
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpwd}
+      MYSQL_DATABASE: citymesh
+      MYSQL_USER: citymeshuser
+      MYSQL_PASSWORD: ${DB_PASSWORD:-citymeshpwd}
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    restart: unless-stopped
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PMA_HOST: db
+      PMA_USER: citymeshuser
+      PMA_PASSWORD: ${DB_PASSWORD:-citymeshpwd}
+      PMA_PORT: 3306
+    expose:
+      - "80"
+    restart: unless-stopped
+
+  app:
+    image: openjdk:24-jdk
+    container_name: epbva-cucumber-app
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./ADTCN/target:/app
+      - ./ADTCN/src/main/resources:/config
+    expose:
+      - "8081"
+    environment:
+      TZ: Europe/Brussels
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/citymesh
+      SPRING_DATASOURCE_USERNAME: citymeshuser
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-citymeshpwd}
+    entrypoint: java
+    command:
+      - -jar
+      - /app/epbva-cucumber-1.0-SNAPSHOT.jar
+    restart: unless-stopped
+
+  frontend:
+    image: node:18-alpine
+    container_name: citymesh-frontend
+    working_dir: /app
+    volumes:
+      - ./Client/CityMeshClient/frontend:/app
+      - frontend_dist:/app/dist
+    command: sh -c "npm install && npm run build"
+    restart: "no"
+
+  nginx:
+    image: nginx:alpine
+    container_name: citymesh-nginx
+    depends_on:
+      - app
+      - phpmyadmin
+      - frontend
+    ports:
+      - "80:80"
+      - "8081:8081"
+      - "8082:8082"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - frontend_dist:/usr/share/nginx/html
+    restart: unless-stopped
+
+volumes:
+  db_data:
+  frontend_dist:
