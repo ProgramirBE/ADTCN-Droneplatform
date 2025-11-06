@@ -41,6 +41,8 @@ public class SecurityConfig {
                                 new AntPathRequestMatcher("/"),            // Root URL (kan doorsturen naar /login of /drones)
                                 new AntPathRequestMatcher("/login*"),       // Login pagina
                                 new AntPathRequestMatcher("/h2/**"),        // H2 console
+                                new AntPathRequestMatcher("/h2-console/**"),// H2 console exact path
+                                new AntPathRequestMatcher("/api/**"),       // Autoriseer REST API endpoints
                                 new AntPathRequestMatcher("/favicon.ico"),  // Favicon
                                 new AntPathRequestMatcher("/images/**"),    // Afbeeldingen
                                 new AntPathRequestMatcher("/css/**"),       // CSS bestanden

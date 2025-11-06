@@ -11,7 +11,7 @@ import java.util.Date;
  * </p>
  */
 @Entity
-@Table(name = "reservaties")
+@Table(name = "reservations")
 public class Reservatie {
 
     /**
@@ -19,13 +19,13 @@ public class Reservatie {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     /**
      * ID van de gereserveerde drone (foreign key).
      */
     @Column(name = "drone_id")
-    private int droneId;
+    private Integer droneId;
 
     /**
      * Locatie waarvoor de drone gereserveerd is.
@@ -49,13 +49,14 @@ public class Reservatie {
     /**
      * Datum waarop de reservatie werd geplaatst.
      */
-    @Column(name = "reservatie_datum")
+    @Column(name = "start_time")
     private Date reservatieDatum;
 
     /**
      * Type van de drone
      */
-    private Drone.DroneType droneType;
+    @Column(name = "drone_type")
+    private String droneType;
 
     /**
      * Lege constructor vereist door JPA.
@@ -71,7 +72,7 @@ public class Reservatie {
      * @param status              de status van de reservatie
      * @param reservatieDatum     de datum waarop de reservatie werd geplaatst
      */
-    public Reservatie(int droneId, String locatie, String consumptionStrategy, ReservatieStatus status, Date reservatieDatum) {
+    public Reservatie(Integer droneId, String locatie, String consumptionStrategy, ReservatieStatus status, Date reservatieDatum) {
         this.droneId = droneId;
         this.locatie = locatie;
         this.consumptionStrategy = consumptionStrategy;
@@ -79,11 +80,11 @@ public class Reservatie {
         this.reservatieDatum = reservatieDatum;
     }
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
 
-    public int getDroneId() { return droneId; }
-    public void setDroneId(int droneId) { this.droneId = droneId; }
+    public Integer getDroneId() { return droneId; }
+    public void setDroneId(Integer droneId) { this.droneId = droneId; }
 
     public String getLocatie() { return locatie; }
     public void setLocatie(String locatie) { this.locatie = locatie; }
@@ -97,8 +98,22 @@ public class Reservatie {
     public Date getReservatieDatum() { return reservatieDatum; }
     public void setReservatieDatum(Date reservatieDatum) { this.reservatieDatum = reservatieDatum; }
 
-    public Drone.DroneType getDroneType() { return droneType; }
-    public void setDroneType(Drone.DroneType droneType) { this.droneType = droneType; }
+    public String getDroneType() { return droneType; }
+    public void setDroneType(String droneType) { this.droneType = droneType; }
+
+    // Compatibility with Drone.DroneType used in controllers
+    public void setDroneType(Drone.DroneType type) {
+        this.droneType = (type != null) ? type.name() : null;
+    }
+
+    public Drone.DroneType getDroneTypeEnum() {
+        if (this.droneType == null) return null;
+        try {
+            return Drone.DroneType.valueOf(this.droneType);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
+    }
 
     /**
      * Enum die de mogelijke statussen van een reservatie voorstelt.
