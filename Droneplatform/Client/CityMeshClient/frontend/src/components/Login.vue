@@ -1,15 +1,15 @@
 <template>
   <section>
-    <h2>Connexion</h2>
+    <h2>Login</h2>
     <form @submit.prevent="doLogin">
       <div>
-        <input v-model="username" placeholder="Nom d'utilisateur" />
+        <input v-model="username" placeholder="Username" />
       </div>
       <div>
-        <input v-model="password" type="password" placeholder="Mot de passe" />
+        <input v-model="password" type="password" placeholder="password" />
       </div>
       <div style="margin-top:8px">
-        <button type="submit">Se connecter</button>
+        <button type="submit">Login</button>
       </div>
     </form>
     <div v-if="error" style="color:crimson; margin-top:6px">{{ error }}</div>
@@ -45,12 +45,12 @@ export default {
         if (res.ok || res.redirected || res.status === 302) {
           emit('login-success')
         } else if (res.status === 401 || res.status === 403) {
-          error.value = 'Identifiants invalides'
+          error.value = 'Login Invalid'
         } else {
-          error.value = 'Erreur serveur: ' + res.status
+          error.value = 'Server Error: ' + res.status
         }
       } catch (e) {
-        error.value = 'Erreur réseau: ' + e.message
+        error.value = 'Network Error: ' + e.message
       }
     }
 

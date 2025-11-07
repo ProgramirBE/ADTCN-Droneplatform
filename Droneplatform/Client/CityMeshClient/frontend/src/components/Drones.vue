@@ -1,17 +1,17 @@
 <template>
   <section>
-    <h2>Liste des drones</h2>
+    <h2>Lijst van drones</h2>
     <button @click="reload" style="margin-bottom: 1rem;">🔄 Actualiser</button>
-    <div v-if="loading">Chargement...</div>
+    <div v-if="loading">Loading...</div>
     <div v-else-if="error" style="color:crimson">{{ error }}</div>
     <table v-else style="width:100%; border-collapse: collapse;">
       <thead>
         <tr style="background: #f0f0f0;">
           <th style="border:1px solid #ccc; padding:8px;">ID</th>
-          <th style="border:1px solid #ccc; padding:8px;">Nom</th>
-          <th style="border:1px solid #ccc; padding:8px;">Modèle</th>
+          <th style="border:1px solid #ccc; padding:8px;">Naam</th>
+          <th style="border:1px solid #ccc; padding:8px;">Model</th>
           <th style="border:1px solid #ccc; padding:8px;">Statut</th>
-          <th style="border:1px solid #ccc; padding:8px;">Batterie (%)</th>
+          <th style="border:1px solid #ccc; padding:8px;">Batterij (%)</th>
         </tr>
       </thead>
       <tbody>
@@ -24,7 +24,7 @@
         </tr>
       </tbody>
     </table>
-    <div v-if="!loading && drones.length === 0" style="margin-top:1rem;">Aucun drone trouvé.</div>
+    <div v-if="!loading && drones.length === 0" style="margin-top:1rem;">Geen gevonden drones.</div>
   </section>
 </template>
 
@@ -45,10 +45,10 @@ export default {
         if (res.ok) {
           drones.value = await res.json()
         } else {
-          error.value = 'Erreur: ' + res.status
+          error.value = 'Error: ' + res.status
         }
       } catch (e) {
-        error.value = 'Erreur réseau: ' + e.message
+        error.value = 'Error Network: ' + e.message
       } finally {
         loading.value = false
       }

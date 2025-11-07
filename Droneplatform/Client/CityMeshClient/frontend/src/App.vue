@@ -44,7 +44,7 @@
         <div class="tabs">
           <button @click="tab = 'drones'" :class="{active: tab === 'drones'}">Drones</button>
           <button @click="tab = 'launchpads'" :class="{active: tab === 'launchpads'}">Launchpads</button>
-          <button @click="tab = 'reservations'" :class="{active: tab === 'reservations'}">Réservations</button>
+          <button @click="tab = 'reservations'" :class="{active: tab === 'reservations'}">Reservaties</button>
           <button @click="tab = 'users'" :class="{active: tab === 'users'}">Users</button>
         </div>
 
@@ -87,9 +87,9 @@
                 </td>
                 <td v-if="isMechanic()">
                   <div class="action-buttons">
-                    <button v-if="!editingDrone[d.id]" @click="startEditDrone(d)" class="btn-edit">✏️ Modifier</button>
+                    <button v-if="!editingDrone[d.id]" @click="startEditDrone(d)" class="btn-edit">✏️ Edit</button>
                     <template v-else>
-                      <button @click="saveDrone(d.id)" class="btn-save">💾 Sauver</button>
+                      <button @click="saveDrone(d.id)" class="btn-save">💾 Save</button>
                       <button @click="cancelEdit(d.id)" class="btn-cancel-edit">❌</button>
                     </template>
                     <button @click="resetDroneStatus(d.id)" class="btn-reset">🔄 Reset</button>
@@ -127,10 +127,10 @@
 
         <!-- Réservations -->
         <div v-if="tab === 'reservations'" class="content">
-          <h2>📅 Mes Réservations</h2>
+          <h2>📅 Mijn Reservaties</h2>
 
           <button @click="showReservationModal = true" class="btn-primary" style="margin-bottom: 20px;">
-            ➕ Nouvelle Réservation
+            ➕ Niewe reservatie
           </button>
 
           <table v-if="reservations.length">
@@ -138,8 +138,8 @@
               <tr>
                 <th>ID</th>
                 <th>Launchpad</th>
-                <th>Début</th>
-                <th>Fin</th>
+                <th>Start</th>
+                <th>Einde</th>
                 <th>Statut</th>
                 <th>Actions</th>
               </tr>
@@ -152,39 +152,39 @@
                 <td>{{ formatDate(r.endTime) }}</td>
                 <td><span :class="'badge badge-' + r.status.toLowerCase()">{{ r.status }}</span></td>
                 <td>
-                  <button v-if="r.status === 'CONFIRMED'" @click="cancelRes(r.id)" class="btn-cancel">Annuler</button>
+                  <button v-if="r.status === 'CONFIRMED'" @click="cancelRes(r.id)" class="btn-cancel">Cancen</button>
                 </td>
               </tr>
             </tbody>
           </table>
-          <p v-else>Aucune réservation</p>
+          <p v-else>Geen reservatie</p>
         </div>
 
         <!-- Modal Nouvelle Réservation -->
         <div v-if="showReservationModal" class="modal" @click.self="showReservationModal = false">
           <div class="modal-content">
-            <h3>📍 Nouvelle Réservation</h3>
+            <h3>📍 Niewe reservatie</h3>
             <form @submit.prevent="createRes">
               <div class="form-group">
                 <label>Launchpad</label>
                 <select v-model="newReservation.launchpadId" required>
-                  <option value="">Sélectionnez un launchpad</option>
+                  <option value="">Select launchpad</option>
                   <option v-for="lp in availableLaunchpads" :key="lp.id" :value="lp.id">
                     {{ lp.name }} ({{ lp.latitude }}, {{ lp.longitude }})
                   </option>
                 </select>
               </div>
               <div class="form-group">
-                <label>Début</label>
+                <label>Start</label>
                 <input type="datetime-local" v-model="newReservation.startTime" required>
               </div>
               <div class="form-group">
-                <label>Fin</label>
+                <label>Einde</label>
                 <input type="datetime-local" v-model="newReservation.endTime" required>
               </div>
               <div style="display: flex; gap: 10px;">
-                <button type="submit" class="btn-primary">Réserver</button>
-                <button type="button" @click="showReservationModal = false" class="btn-cancel">Annuler</button>
+                <button type="submit" class="btn-primary">Reserveer</button>
+                <button type="button" @click="showReservationModal = false" class="btn-cancel">Cancel</button>
               </div>
             </form>
           </div>
@@ -192,13 +192,13 @@
 
         <!-- Users -->
         <div v-if="tab === 'users'" class="content">
-          <h2>👥 Utilisateurs ({{ users.length }})</h2>
+          <h2>👥 Users ({{ users.length }})</h2>
           <table v-if="users.length">
             <thead>
               <tr>
                 <th>ID</th>
                 <th>Username</th>
-                <th>Nom</th>
+                <th>Name</th>
                 <th>Email</th>
               </tr>
             </thead>
@@ -318,12 +318,12 @@ export default {
       }
     },
     async cancelRes(id) {
-      if (confirm('Annuler cette réservation ?')) {
+      if (confirm('Cancel reservation ?')) {
         try {
           await api.cancelReservation(id)
           await this.loadData()
         } catch (err) {
-          alert('Erreur lors de l\'annulation')
+          alert('Error While canceling')
         }
       }
     },
