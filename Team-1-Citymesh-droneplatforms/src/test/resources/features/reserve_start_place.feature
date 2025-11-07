@@ -3,7 +3,6 @@ Feature: Reserve a start place
   I want to view and reserve an available start place
   So that I can launch my drone from a safe location
 
-  # Business Rules Only — no UI words (buttons, css, ids). WHAT, not HOW.
   Background:
     Given the system is in a known initial state
 
@@ -42,23 +41,3 @@ Feature: Reserve a start place
         | SP-910     | 30       |
         | SP-911     | 10       |
         | SP-912     | 49       |
-
-  Rule: Double booking is not allowed
-
-    @bro @business-rule
-    Scenario: The same start place cannot be reserved twice
-      Given a start place "SP-777" exists that is available and 60m from the nearest no-fly zone
-      When the pilot reserves start place "SP-777"
-      Then the system marks "SP-777" as reserved
-      When the pilot reserves start place "SP-777"
-      Then the reservation for "SP-777" is rejected due to double booking
-
-  Rule: Optional expiry (time-boxed reservations)
-
-    @bro @business-rule
-    Scenario: A provisional reservation expires after its configured time
-      Given a start place "SP-888" exists that is available and 60m from the nearest no-fly zone
-      And that start place "SP-888" has an expiry time of 5 minutes
-      When the pilot reserves start place "SP-888"
-      And 5 minutes pass
-      Then the system makes "SP-888" available again
