@@ -14,10 +14,9 @@ public class ReserveStepsPageObjects {
     private HomePage homePage;
     private StartPlacesPage startPlacesPage;
 
-    // Change to 8080 if your test server runs there
     private final String baseUrl = System.getProperty("baseUrl", "http://localhost:8080");
 
-    // ---- Setup and teardown ----
+
     @Before
     public void setUp() {
         System.setProperty("webdriver.chrome.driver", "C:\\Users\\andre\\OneDrive\\Documents\\_Odisee_vakken\\3de_jaar\\BA3\\chromedriver\\chromedriver-win64\\chromedriver.exe");
@@ -33,11 +32,8 @@ public class ReserveStepsPageObjects {
         }
     }
 
-    // ---- Step definitions ----
-
     @Given("the system is in a known initial state")
     public void the_system_is_in_a_known_initial_state() {
-        // simply open homepage and go to start places to reset state
         homePage.open(baseUrl);
         homePage.goToStartPlaces();
     }
